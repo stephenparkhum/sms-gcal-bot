@@ -2,13 +2,14 @@
   "name": "sms_calendar_bot",
   "version": "1.0.0",
   "description": "SMS Google Calendar Bot",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^18.11.17",
     "dotenv": "^16.0.3",
     "twilio": "^3.84.0"
   }
