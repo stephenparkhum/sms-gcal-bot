@@ -12,8 +12,8 @@ const getCurrentDate = () => {
     };
 };
 exports.getCurrentDate = getCurrentDate;
-const generateMessage = (who, what, when) => {
-    return `${who.display.toUpperCase()} - You have a ${what} event at ${when.month + 1}/${when.day} - ${when.hour > 12 ? when.hour - 12 : when.hour}:${when.minute}`;
+const generateMessage = (who, what, location, when) => {
+    return `${who.display.toUpperCase()} - You have the ${what} event at ${when.month + 1}/${when.day} - ${when.hour > 12 ? when.hour - 12 : when.hour}:${when.minute} ${location ? location : ""}`;
 };
 exports.generateMessage = generateMessage;
 // Get all the stuff at midnight

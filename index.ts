@@ -18,7 +18,6 @@ const client = require("twilio")(accountSid, authToken);
 const testSenderNum = process.env.TEST_SENDER_NUM;
 
 const parseEvents = (events: CalEvent[] | any) => {
-  console.log(events);
   let allEvents: ParsedEvent[] = [];
 
   for (let i = 0; i < events.length; i++) {
@@ -54,41 +53,59 @@ const parseEvents = (events: CalEvent[] | any) => {
 };
 
 const sendTestTwilioMsg = async () => {
-  const today = getCurrentDate();
-  console.log(today);
+  // const today = getCurrentDate();
+  // const { month, day, hour, minute } = today;
 
-  const events = async () =>
-    await authorize().then(listEvents).catch(console.error);
-  const formattedEvents = parseEvents(events);
-
-  console.log(formattedEvents);
-
-  const { month, day, hour, minute } = today;
-
-  const textSP = generateMessage(receivers.stephen, "TEST STEPHEN EVENT", {
-    month,
-    day,
-    hour,
-    minute,
-  });
-
+  /*
   const textSB = generateMessage(receivers.sarah, "TEST SARAH EVENT", {
     month,
     day,
     hour,
     minute,
   });
+  */
 
-  schedule.scheduleJob(`0 33 ${hour} * * *`, (fireDate: any) => {
-    console.log(`This ran at ${fireDate}`);
-    sendTestMessage(
-      testSenderNum,
-      client,
-      textSP,
-      receivers.stephen.phoneNumber
+  const events = await authorize().then(listEvents).catch(console.error);
+  const formattedEvents = parseEvents(events);
+
+  console.log(formattedEvents);
+
+  for (let i = 0; i < events.length; i++) {
+    const { summary, start, location } = events[i];
+    const { day, month, hour, minute } = start;
+
+    let textSP = generateMessage(receivers.stephen, summary, location, {
+      month,
+      day,
+      hour,
+      minute,
+    });
+
+    schedule.scheduleJob(
+      `0 ${minute} ${hour} ${day} ${month} *`,
+      (fireDate: any) => {
+        console.log(`This ran at ${fireDate}`);
+        sendTestMessage(
+          testSenderNum,
+          client,
+          textSP,
+          receivers.stephen.phoneNumber
+        );
+      }
     );
-    sendTestMessage(testSenderNum, client, textSB, receivers.sarah.phoneNumber);
+  }
+};
+
+const midnightRun = () => {
+  const rule = new schedule.RecurrenceRule();
+
+  rule.hour = 0;
+  rule.minute = 0;
+
+  schedule.scheduleJob(rule, function () {
+    console.log("Job running at 12am");
+    sendTestTwilioMsg();
   });
 };
 
-sendTestTwilioMsg();
+midnightRun();

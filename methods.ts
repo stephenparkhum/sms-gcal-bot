@@ -31,13 +31,14 @@ export interface BothPeople {
 export const generateMessage = (
   who: Person,
   what: string,
+  location: string,
   when: { month: number; day: number; hour: number; minute: number }
 ) => {
-  return `${who.display.toUpperCase()} - You have a ${what} event at ${
+  return `${who.display.toUpperCase()} - You have the ${what} event at ${
     when.month + 1
   }/${when.day} - ${when.hour > 12 ? when.hour - 12 : when.hour}:${
     when.minute
-  }`;
+  } ${location ? location : ""}`;
 };
 
 // Get all the stuff at midnight
